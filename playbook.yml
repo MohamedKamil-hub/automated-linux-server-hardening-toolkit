@@ -1,0 +1,8 @@
+---
+- name: Harden Linux Server
+  hosts: localhost
+  connection: local
+  become: yes
+
+  roles:
+    - hardening

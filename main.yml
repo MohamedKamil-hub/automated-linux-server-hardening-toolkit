@@ -1,0 +1,71 @@
+---
+- name: Backup SSH config
+  copy:
+    src: /etc/ssh/sshd_config
+    dest: "/etc/ssh/sshd_config.backup.{{ ansible_date_time.epoch }}"
+    remote_src: yes
+
+- name: Disable root SSH login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+  notify: Restart sshd
+
+- name: Set minimum password length
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MIN_LEN'
+    line: 'PASS_MIN_LEN 12'
+    state: present
+
+- name: Set password complexity
+  lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^minlen'
+    line: 'minlen = 12'
+    state: present
+    create: yes
+
+- name: Enable UFW firewall
+  ufw:
+    state: enabled
+    policy: deny
+    rule: allow
+    name: OpenSSH
+
+- name: Restrict cron permissions
+  file:
+    path: "{{ item }}"
+    mode: 'go-rwx'
+    recurse: yes
+  loop:
+    - /etc/cron.d
+    - /etc/cron.daily
+    - /etc/cron.hourly
+    - /etc/cron.monthly
+    - /etc/cron.weekly
+
+- name: Remove unnecessary SUID bits
+  shell: find / -perm -4000 -exec chmod -s {} \; 2>/dev/null
+  changed_when: false
+
+- name: Disable cups service
+  systemd:
+    name: cups
+    enabled: no
+    state: stopped
+  ignore_errors: yes
+
+- name: Log hardening actions
+  lineinfile:
+    path: "{{ playbook_dir }}/../../logs/ansible-hardening.log"
+    line: "[{{ ansible_date_time.iso8601 }}] Hardening applied on {{ inventory_hostname }}"
+    create: yes
+
+handlers:
+  - name: Restart sshd
+    service:
+      name: sshd
+      state: restarted
