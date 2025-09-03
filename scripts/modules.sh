@@ -34,6 +34,6 @@ ensure_sshd_config() {
         log "Appended $key $value to $file"
     fi
     
-    systemctl restart sshd
+    systemctl restart ssh
     log "Restarted sshd service"
 }

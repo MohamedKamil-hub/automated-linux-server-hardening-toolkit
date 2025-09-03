@@ -1,0 +1,14 @@
+[2025-09-03 17:49:16] Starting quick hardening script
+[2025-09-03 17:49:16] Backed up /etc/ssh/sshd_config to /etc/ssh/sshd_config.backup.20250903_174916
+[2025-09-03 17:49:16] Updated PermitRootLogin to no in /etc/ssh/sshd_config
+[2025-09-03 17:49:16] Restarted sshd service
+[2025-09-03 17:49:16] Backed up /etc/login.defs to /etc/login.defs.backup.20250903_174916
+[2025-09-03 17:49:16] Set a secure password minimum length to 12
+[2025-09-03 17:49:16] Backed up /etc/security/pwquality.conf to /etc/security/pwquality.conf.backup.20250903_174916
+[2025-09-03 17:49:16] Set password complexity: minimum length 12
+[2025-09-03 17:49:16] Added iptables rule to allow SSH
+[2025-09-03 17:49:16] Firewall rules applied using iptables
+[2025-09-03 17:49:16] Restricted cron permissions
+[2025-09-03 17:49:56] Removed unnecessary SUID bits
+[2025-09-03 17:49:58] Disabled cups service
+[2025-09-03 17:49:58] Quick hardening complete
